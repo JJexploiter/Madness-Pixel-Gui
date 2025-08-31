@@ -1,0 +1,84 @@
+-- Madness Pixel Skills estilo Strongest Battlegrounds
+
+if not getgenv().PixelCode then
+    warn("Só funciona no PixelCode++! 💀")
+    return
+
+local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+
+local skills = {
+    ["Chaos Flame"] = function(player)
+        local char = player.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+
+        for i=1,15 do
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(1,1,1)
+            part.Anchored = true
+            part.CanCollide = false
+            part.Material = Enum.Material.Neon
+            part.BrickColor = BrickColor.new("Bright red")
+            part.CFrame = root.CFrame * CFrame.new(math.random(-10,10), 10, math.random(-10,10))
+            part.Parent = workspace
+            Debris:AddItem(part, 2)
+        end
+    end,
+
+    ["Lightning Strike"] = function(player)
+        local char = player.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+
+        local ray = Instance.new("Part")
+        ray.Size = Vector3.new(1,20,1)
+        ray.Anchored = true
+        ray.CanCollide = false
+        ray.Material = Enum.Material.Neon
+        ray.BrickColor = BrickColor.new("Bright blue")
+        ray.CFrame = root.CFrame * CFrame.new(math.random(-10,10),10,math.random(-10,10))
+        ray.Parent = workspace
+        Debris:AddItem(ray,1.5)
+    end,
+
+    ["Chaos Explosion"] = function(player)
+        local char = player.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+
+        local explosion = Instance.new("Explosion")
+        explosion.Position = root.Position + Vector3.new(math.random(-5,5),0,math.random(-5,5))
+        explosion.BlastRadius = 8
+        explosion.BlastPressure = 0
+        explosion.Parent = workspace
+    end,
+
+    ["Teleport"] = function(player)
+        local char = player.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+
+        root.CFrame = root.CFrame + Vector3.new(math.random(-30,30),0,math.random(-30,30))
+    end
+}
+
+-- Cria Tools no inventário de cada player
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(char)
+        for skillName, func in pairs(skills) do
+            local tool = Instance.new("Tool")
+            tool.Name = skillName
+            tool.RequiresHandle = false
+            tool.Parent = player.Backpack
+
+            tool.Activated:Connect(function()
+                func(player)
+            end)
+        end
+    end)
+end)
